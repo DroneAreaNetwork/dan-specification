@@ -30,7 +30,7 @@ excluding 5645Mhz should use these two ranges: [5600, 5644], [5646, 5900].
         - *string* Short Name: Short name (usually 1 character long) for
         showing the band in small indicators or next to a channel number
         (e.g. "A").
-        - array[uint16_t]* Channels: Channel frequencies in MHz. See
+        - *array[uint16_t]* Channels: Channel frequencies in MHz. See
         additional considerations.
     - *array[struct]* Power levels
         - *uint8_t* Type: DAN-VTX-POWER-LEVEL-TYPE-ENUM
