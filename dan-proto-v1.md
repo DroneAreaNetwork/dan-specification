@@ -43,6 +43,8 @@ byte.
 - array[T]: uvarint_t length - [T... elements]
 - string: [array(uint8_t)]
 - struct: A simple concatenation of fields with no padding between them.
+- union: A list of fields where only of them can be used at any given time,
+  usually preceded by an enum to determine the field used.
 
 ## General message type
 
@@ -81,12 +83,14 @@ an *struct DAN-ERROR-MESSAGE-V1*.
     - *string* Model name
     - *string* HW version/revision
     - *string* Software version
-    - *enum* DAN-PERIPHERAL-SUPPORTED-BAUDRATES-MASK-V1
-    - *enum* DAN-PERIPHERAL-CAPABILITIES-MASK-V1
+    - *uint16_t* DAN-PERIPHERAL-SUPPORTED-BAUDRATES-MASK-V1
+    - *uint16_t* DAN-PERIPHERAL-CAPABILITIES-MASK-V1
 
 - *struct* DAN-PERIPHERAL-CONFIGURE-PAYLOAD-V1
-    - *uint16_t* Requested baud rate: Baud rate the master wants to use to
-    communicate with this device, in bps.
+    - *uint8_t* DAN-PERIPHERAL-CONFIGURATION-REQUEST-TYPE-ENUM-V1
+    - *union* DAN-PERIPHERAL-CONFIGURATION-REQUEST-FIELDS-V1
+        - *uvarint_t* Requested baud rate: Baud rate the master wants to use to
+        communicate with this device, in bps.
 
 - *enum* DAN-PERIPHERAL-ACK
     - DAN-PERIPHERAL-ACK-OK = 0: Indicates an operation was successfully
@@ -103,11 +107,19 @@ A DAN master MIGHT use this information to communicate with this device at
 higher speeds, but devices should not assume the DAN master will use any
 specific BPS. The following bits are defined:
 
-- *BPS_57600 = bit0*
+- *BPS_19200 = bit0*
+
+    The device supports a baud rate of 19200bps.
+
+- *BPS_38400 = bit1*
+
+    The device supports a baud rate of 38400bps.
+
+- *BPS_57600 = bit2*
 
     The device supports a baud rate of 57600bps.
 
-- *BPS_115200 = bit1*
+- *BPS_115200 = bit3*
 
     The device supports a baud rate of 115200bps.
 
@@ -115,6 +127,16 @@ specific BPS. The following bits are defined:
 
 This 16-bit bitmask describes additional DAN capabilities that a peripheral
 might support. Currently, all bits are reserved and this field MUST be zero.
+
+### DAN-PERIPHERAL-CONFIGURATION-REQUEST-TYPE-ENUM-V1
+
+This 8-bit enum tells a peripheral the type of configuration request sent by
+the DAN master, allowing the peripheral to read the appropriate field in
+DAN-PERIPHERAL-CONFIGURATION-REQUEST-FIELDS-V1. The following values are
+defined.
+
+- DAN-PERIPHERAL-CONFIGURATION-REQUEST-TYPE-BPS = 0: Configure the bps used
+for all future communication. Value is in the "Requested baud rate" field.
 
 
 ## Well known DAN command codes
