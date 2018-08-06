@@ -60,7 +60,7 @@ Bits not defined in this specification MUST be zero.
 
 ### DAN-VTX-POWER-LEVEL-TYPE-ENUM
 
-This enum defines how a power level should be handled by the DAN master.
+This 8-bit enum defines how a power level should be handled by the DAN master.
 
 - DAN-VTX-POWER-LEVEL-OFF = 0: No RF output. VTX MUST NOT include more than one
 power level of this type.
@@ -108,8 +108,9 @@ arbitrary external method (button/NFC/etc...).
 
 ### DAN-VTX-SET-BY-ENUM
 
-This enum tracks how a parameter was set. This lets a DAN master know if the change
-was performed via DAN or via an external arbitrary method. Valid values:
+This 8-bit enum tracks how a parameter was set. This lets a DAN master know if
+the change was performed via DAN or via an external arbitrary method. Valid
+values:
 
 - DAN-VTX-SET-BY-DAN = 0: The value was set in response to a DAN request.
 - DAN-VTX-SET-BY-EXTERNAL = 1: The value was set externally (button/NFC/etc..).
