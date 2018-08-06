@@ -23,7 +23,8 @@ bus. Multiple devices of the same type are supported by using multiple uarts.
 
 ## Hardware requirements
 
-- DAN peripherals must use a baudrate of 115200, 1 stop bit and no parity bits.
+- DAN peripherals MUST initialy use a baudrate of 9600, 1 stop bit and no
+parity bits.
 - Half-duplex.
 - No pulling of the line when inactive.
 
@@ -80,6 +81,12 @@ an *struct DAN-ERROR-MESSAGE-V1*.
     - *string* Model name
     - *string* HW version/revision
     - *string* Software version
+    - *enum* DAN-PERIPHERAL-SUPPORTED-BAUDRATES-MASK-V1
+    - *enum* DAN-PERIPHERAL-CAPABILITIES-MASK-V1
+
+- *struct* DAN-PERIPHERAL-CONFIGURE-PAYLOAD-V1
+    - *uint16_t* Requested baud rate: Baud rate the master wants to use to
+    communicate with this device, in bps.
 
 - *enum* DAN-PERIPHERAL-ACK
     - DAN-PERIPHERAL-ACK-OK = 0: Indicates an operation was successfully
@@ -87,9 +94,48 @@ an *struct DAN-ERROR-MESSAGE-V1*.
     - DAN-PERIPHERAL-ACK-FAIL = 1: Indicates an operation failed. When needed,
     responses will also define some means to indicate the failure reason.
 
+### DAN-PERIPHERAL-SUPPORTED-BAUDRATES-MASK-V1
+
+This 16-bit bitmask describes higher baud rates supported by the peripheral.
+Bits not defined in this spec MUST be zero.
+
+A DAN master MIGHT use this information to communicate with this device at
+higher speeds, but devices should not assume the DAN master will use any
+specific BPS. The following bits are defined:
+
+- *BPS_57600 = bit0*
+
+    The device supports a baud rate of 57600bps.
+
+- *BPS_115200 = bit1*
+
+    The device supports a baud rate of 115200bps.
+
+### DAN-PERIPHERAL-CAPABILITIES-MASK-V1
+
+This 16-bit bitmask describes additional DAN capabilities that a peripheral
+might support. Currently, all bits are reserved and this field MUST be zero.
+
+
 ## Well known DAN command codes
 
-In order to allow using the serial port as a bus, each device type uses a different
-command code space. See each peripheral type's document for the message definitions. 
+In order to allow using the serial port as a bus, each device type uses a
+different command code space. See each peripheral type's document for the
+message definitions. 
 
-See other documents for peripheral specific features
+See other documents for peripheral specific features.
+
+## Principle of operation
+
+All DAN peripherals should be connected in a star configuration to the DAN
+master, via a single wire (i.e. all peripherals should be connected to a single
+pin in the master).
+
+During startup, the master will perform the discovery phase by probing for each
+device type defined in the DAN spec on each DAN-enabled UART at 9600bps. After
+the discovery phase is done, no new peripherals will be detected (i.e. hot
+plugging is not supported).
+
+Once all the devices present in the bus are discovered, the master will send a
+CONFIGURE request as appropriate. Devices that are requested to run at a given
+baud rate, should continue to do so until they're power cycled.

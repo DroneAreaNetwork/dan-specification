@@ -13,6 +13,11 @@ and frequencies. VTX with means to change the current settings externally
 - Input: None
 - Output: *struct* DAN-PERIPHERAL-IDENTITY-PAYLOAD-V1
 
+## VTX_CONFIGURE: 0x0021
+
+- Input: *struct* DAN-PERIPHERAL-CONFIGURE-V1
+- Output: *DAN-PERIPHERAL-ACK* ACK
+
 ## VTX_CAPABILITIES: 0x0022
 
 Returns a list of the supported frequencies as closed ranges (i.e. a range
