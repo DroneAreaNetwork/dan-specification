@@ -23,7 +23,7 @@ bus. Multiple devices of the same type are supported by using multiple uarts.
 
 ## Hardware requirements
 
-- DAN peripherals MUST initialy use a baudrate of 9600, 1 stop bit and no
+- DAN peripherals MUST initially use a baudrate of 9600, 1 stop bit and no
 parity bits.
 - Half-duplex.
 - No pulling of the line when inactive.
